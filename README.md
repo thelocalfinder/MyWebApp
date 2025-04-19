@@ -1,84 +1,164 @@
-# MyWebApp - E-commerce API
+# Fashion Shopping Platform
 
-A .NET Core Web API for an e-commerce platform similar to Lyst, featuring product management, categories, subcategories, and brand tracking.
+A modern e-commerce platform built with Next.js and ASP.NET Core.
 
 ## Features
 
-- Product management with detailed information
-- Category and subcategory organization
-- Brand tracking and statistics
-- Click tracking for products
-- Advanced filtering and search capabilities
-- Export functionality for data analysis
+- Browse products by category and subcategory
+- Filter products by brand, color, size, and price
+- Shopping cart functionality
+- Secure checkout process
+- Responsive design for all devices
+- Real-time product updates
+- User-friendly navigation
 
 ## Tech Stack
 
-- .NET Core 9.0
+### Frontend
+- Next.js 14 with App Router
+- TypeScript
+- Tailwind CSS
+- React Query for data fetching
+- Zustand for state management
+- Framer Motion for animations
+
+### Backend
+- ASP.NET Core
 - Entity Framework Core
-- MySQL Database
-- CORS enabled for frontend integration
+- SQL Server
+- RESTful API
 
-## API Endpoints
+## Getting Started
 
-### Products
-- `GET /api/products` - Get all products with filtering options
-- `GET /api/products/{id}` - Get product details
-- `POST /api/products/{id}/click` - Track product clicks
-- `GET /api/products/category/{categoryId}` - Get products by category
-- `GET /api/products/color/{color}` - Get products by color
-- `GET /api/products/material/{material}` - Get products by material
-- `GET /api/products/search` - Advanced search with multiple criteria
+### Prerequisites
+- Node.js 18 or later
+- .NET 7 SDK or later
+- SQL Server
 
-### Categories
-- `GET /api/categories` - Get all categories
-- `GET /api/home/categories/{gender}` - Get categories by gender
+### Frontend Setup
+1. Navigate to the frontend directory:
+   ```bash
+   cd lyst-frontend
+   ```
 
-### SubCategories
-- `GET /api/subcategory` - Get all subcategories
-- `GET /api/home/subcategories/{categoryId}` - Get subcategories by category
-- `GET /api/home/products/subcategory/{subCategoryId}` - Get products by subcategory
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### Brands
-- `GET /api/brands` - Get all brands
-- `GET /api/brands/{id}` - Get brand details with statistics
-- `GET /api/brands/{id}/products` - Get products by brand
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-### Export
-- `GET /api/export/products` - Export products data
-- `GET /api/export/brands` - Export brands data
-- `GET /api/export/categories` - Export categories data
-- `GET /api/export/daily-stats` - Export daily statistics
-- `GET /api/export/weekly-stats` - Export weekly statistics
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Setup
+### Backend Setup
+1. Navigate to the backend directory:
+   ```bash
+   cd MyWebApp
+   ```
 
-1. Clone the repository
 2. Update the connection string in `appsettings.json`
-3. Run migrations:
+
+3. Run database migrations:
    ```bash
    dotnet ef database update
    ```
-4. Run the application:
+
+4. Start the development server:
    ```bash
    dotnet run
    ```
 
-## Database Schema
+5. The API will be available at [http://localhost:5234](http://localhost:5234)
 
-The application uses the following main tables:
-- Products
-- Categories
-- SubCategories
-- Brands
-- Users
-- Likes
+## API Endpoints
 
-## Development
+### Products
+- `GET /api/products` - Get all products
+- `GET /api/products/{id}` - Get product by ID
+- `GET /api/products/by-category/{categoryId}` - Get products by category
+- `GET /api/products/by-brand/{brandId}` - Get products by brand
 
-The application is configured to run on:
-- HTTP: http://localhost:5234
-- HTTPS: https://localhost:7085
+### Categories
+- `GET /api/categories` - Get all categories
+- `GET /api/categories/{id}` - Get category by ID
+- `GET /api/categories/{id}/subcategories` - Get subcategories by category ID
+
+### Brands
+- `GET /api/brands` - Get all brands
+- `GET /api/brands/{id}` - Get brand by ID
+
+## Project Structure
+
+```
+lyst-frontend/
+├── src/
+│   ├── app/                 # Next.js app router pages
+│   ├── components/          # Reusable components
+│   ├── hooks/              # Custom React hooks
+│   ├── store/              # Zustand stores
+│   └── lib/                # Utility functions
+├── public/                 # Static assets
+└── package.json
+
+MyWebApp/
+├── Controllers/            # API controllers
+├── Models/                # Data models
+├── Data/                  # Database context and configurations
+└── Program.cs             # Application entry point
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+# MyWebApp
+
+A full-stack web application with Next.js frontend and .NET backend.
+
+## Project Structure
+
+```
+MyWebApp/
+├── frontend/           # Next.js frontend application
+│   ├── src/           # Source code
+│   ├── public/        # Static files
+│   └── ...
+│
+└── backend/           # .NET backend application
+    ├── Controllers/   # API Controllers
+    ├── Models/        # Data Models
+    └── ...
+```
+
+## Getting Started
+
+### Backend
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+
+2. Run the backend server:
+   ```bash
+   dotnet run
+   ```
+   The backend will be available at http://localhost:5234
+
+### Frontend
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
