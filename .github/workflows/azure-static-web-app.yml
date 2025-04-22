@@ -38,4 +38,9 @@ jobs:
           action: "upload"
           app_location: "frontend"
           output_location: ".next"
-          app_build_command: "npm run build" 
+          app_build_command: "npm run build"
+
+# This file is auto-generated.
+# Made with love by the Azure Static Web Apps team.
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. 
