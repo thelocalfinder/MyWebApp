@@ -1,99 +1,104 @@
 "use client"
 
 import { useState, useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 import { useAuth } from '@/contexts/auth-context'
-import { toast } from 'sonner'
+
+export const dynamic = 'force-dynamic'
 
 export default function ResetPasswordPage() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const { resetPassword } = useAuth()
-  const [newPassword, setNewPassword] = useState('')
+  const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const token = searchParams.get('token')
+  const [token, setToken] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+  const { resetPassword } = useAuth()
 
   useEffect(() => {
-    if (!token) {
-      toast.error('Invalid reset link')
-      router.push('/sign-in')
-    }
-  }, [token, router])
+    // Get token from URL in client-side
+    const searchParams = new URLSearchParams(window.location.search)
+    const tokenFromUrl = searchParams.get('token')
+    setToken(tokenFromUrl)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (newPassword.length < 6) {
-      toast.error('Password must be at least 6 characters long')
+    
+    if (!token) {
+      toast.error('Invalid or missing reset token')
       return
     }
 
-    if (newPassword !== confirmPassword) {
+    if (password !== confirmPassword) {
       toast.error('Passwords do not match')
       return
     }
 
     try {
-      setIsLoading(true)
-      await resetPassword(token!, newPassword)
-      toast.success('Password has been reset successfully')
-      router.push('/sign-in')
-    } catch (error: any) {
+      setLoading(true)
+      await resetPassword(token, password)
+      toast.success('Password reset successful')
+      router.push('/login')
+    } catch (error) {
+      toast.error('Failed to reset password')
       console.error('Reset password error:', error)
-      toast.error(error.message || 'Failed to reset password')
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
-  if (!token) {
-    return null
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-md mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Reset Your Password</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="newPassword">New Password</Label>
-            <Input
-              id="newPassword"
-              type="password"
-              placeholder="Enter your new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              required
-              minLength={6}
-              className="bg-white"
-              disabled={isLoading}
-            />
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Reset your password
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="password" className="sr-only">
+                New Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="New Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">
+                Confirm New Password
+              </label>
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                required
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                placeholder="Confirm New Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm your new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              minLength={6}
-              className="bg-white"
-              disabled={isLoading}
-            />
+
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              {loading ? 'Resetting password...' : 'Reset Password'}
+            </button>
           </div>
-          <Button
-            type="submit"
-            className="w-full bg-primary text-black hover:bg-primary/90 font-semibold"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Resetting Password...' : 'Reset Password'}
-          </Button>
         </form>
       </div>
     </div>
