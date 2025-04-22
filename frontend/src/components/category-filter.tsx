@@ -71,8 +71,9 @@ export function CategoryFilter({ onSelect, currentCategory, currentSubcategory, 
 
   if (loading) {
     return (
-      <Button variant="outline" disabled className="flex items-center gap-2">
-        <span className="animate-pulse">Loading...</span>
+      <Button variant="outline" className="rounded-full px-6 flex items-center gap-2 whitespace-nowrap">
+        <span>Categories</span>
+        <ChevronDown className="h-4 w-4" />
       </Button>
     )
   }
@@ -81,10 +82,11 @@ export function CategoryFilter({ onSelect, currentCategory, currentSubcategory, 
     return (
       <Button 
         variant="outline" 
-        className="flex items-center gap-2 text-red-500"
+        className="rounded-full px-6 flex items-center gap-2 text-red-500 whitespace-nowrap"
         onClick={() => window.location.reload()}
       >
-        {error}
+        Categories
+        <ChevronDown className="h-4 w-4" />
       </Button>
     )
   }

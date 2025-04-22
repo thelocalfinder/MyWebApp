@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import { authenticatedApiClient } from '@/lib/api-client'
 import { toast } from 'sonner'
+import { apiClient } from '@/lib/api-client'
 
 interface User {
   id: number
@@ -81,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Making signin request...')
       
-      const response = await authenticatedApiClient.post('/auth/login', { email, password })
+      const response = await apiClient.post('/auth/login', { email, password })
       const data = response.data
 
       console.log('Signin response:', data)
@@ -121,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Making signup request...')
       
-      const response = await authenticatedApiClient.post('/auth/register', {
+      const response = await apiClient.post('/auth/register', {
         email,
         password,
         name: email.split('@')[0]

@@ -48,10 +48,10 @@ export default async function EditorsPickPage() {
                 name={product.name}
                 price={product.price}
                 discountedPrice={product.discountedPrice}
-                image={product.imageURL}
-                brand={product.brand?.name || 'Unknown Brand'}
-                category={product.category?.name || 'Unknown Category'}
-                subCategory={product.subCategory?.name}
+                imageURL={product.imageURL}
+                brand={{ name: product.brand?.name || 'Unknown Brand' }}
+                category={{ name: product.category?.name || 'Unknown Category' }}
+                subCategory={product.subCategory}
                 isEditorsPick={product.isEditorsPick}
               />
             ))}

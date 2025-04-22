@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'sonner';
 
-const baseURL = 'http://localhost:5234/api';
+const baseURL = 'https://mywebapp-1745023961.azurewebsites.net/api';
 
 console.log('API Base URL:', baseURL);
 
@@ -10,8 +10,9 @@ export const apiClient = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
-  withCredentials: false
+  withCredentials: true
 });
 
 // Create an authenticated API client that includes auth headers
@@ -19,8 +20,9 @@ export const authenticatedApiClient = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
-  withCredentials: false
+  withCredentials: true
 });
 
 // Add request interceptor to authenticated client to add auth token

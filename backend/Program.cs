@@ -68,13 +68,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowFrontend", builder =>
     {
         builder
-            .AllowAnyOrigin()
+            .WithOrigins("https://mywebapp-frontend.azurewebsites.net")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithExposedHeaders("Content-Disposition");
+            .AllowCredentials();
     });
 });
 
@@ -110,6 +110,9 @@ startupLogger.LogInformation($"Configured to listen on port: {port}");
 
 var app = builder.Build();
 
+// IMPORTANT: Use CORS before other middleware
+app.UseCors("AllowFrontend");
+
 // Configure the HTTP request pipeline
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -125,9 +128,6 @@ app.Use(async (context, next) =>
     logger.LogInformation($"Request {context.Request.Method} {context.Request.Path}");
     await next();
 });
-
-// Configure CORS
-app.UseCors("AllowAll");
 
 // Configure routing and endpoints
 app.UseRouting();
@@ -154,6 +154,9 @@ using (var scope = app.Services.CreateScope())
                 
                 // Apply migrations
                 dbLogger.LogInformation("Applying database migrations...");
+                var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+                dbLogger.LogInformation("Pending migrations: {Migrations}", string.Join(", ", pendingMigrations));
+                
                 await context.Database.MigrateAsync();
                 dbLogger.LogInformation("Database migrations applied successfully");
 
@@ -168,20 +171,25 @@ using (var scope = app.Services.CreateScope())
                 var hasBrands = await context.Brands.AnyAsync();
                 var hasCategories = await context.Categories.AnyAsync();
                 var hasProducts = await context.Products.AnyAsync();
+                var hasUsers = await context.Users.AnyAsync();
                 
-                dbLogger.LogInformation($"Database contains: Brands={hasBrands}, Categories={hasCategories}, Products={hasProducts}");
+                dbLogger.LogInformation($"Database contains: Brands={hasBrands}, Categories={hasCategories}, Products={hasProducts}, Users={hasUsers}");
+            }
+            else
+            {
+                dbLogger.LogError("Failed to connect to database");
             }
         }
         catch (Exception dbEx)
         {
-            dbLogger.LogError(dbEx, "Database connection failed with error: {Message}", dbEx.Message);
+            dbLogger.LogError(dbEx, "Database connection failed with error: {Message}\nStack trace: {StackTrace}", dbEx.Message, dbEx.StackTrace);
             // Don't throw here - let the application start even if DB is not available
         }
     }
     catch (Exception ex)
     {
         var errorLogger = services.GetRequiredService<ILogger<Program>>();
-        errorLogger.LogError(ex, "An error occurred while initializing the database: {Message}", ex.Message);
+        errorLogger.LogError(ex, "An error occurred while initializing the database: {Message}\nStack trace: {StackTrace}", ex.Message, ex.StackTrace);
         // Don't throw here - let the application start even if DB is not available
     }
 }

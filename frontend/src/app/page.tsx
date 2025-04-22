@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 
 // Hero banner data
 const heroBanner = {
-  image: "/images/banners/featured-collection.jpg",
+  image: "https://mywebappimages.blob.core.windows.net/images/genattire.jpg",
   title: "Featured Collection",
   description: "Gen Attire is a brand that seamlessly combines comfort and sophistication. Our designs are thoughtfully crafted to empower Gen Z to feel confident and at ease. With us, you'll always look effortlessly stylish and exude confidence wherever you go.",
   link: "/products/featured"

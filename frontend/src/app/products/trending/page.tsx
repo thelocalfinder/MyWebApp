@@ -4,8 +4,25 @@ import { useState, useEffect } from "react"
 import { Loader2, TrendingUp } from "lucide-react"
 import { ProductCard } from "@/components/product-card"
 import { productService } from "@/services/product-service"
-import { Product } from "@/services/product-service"
 import { Button } from "@/components/ui/button"
+
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  discountedPrice?: number;
+  imageURL: string;
+  brand?: { name: string };
+  category?: { name: string };
+  subCategory?: { name: string };
+  isEditorsPick?: boolean;
+}
+
+interface ApiResponse {
+  Items: Product[];
+  CurrentPage: number;
+  TotalPages: number;
+}
 
 const ITEMS_PER_PAGE = 20
 
@@ -13,8 +30,27 @@ export default function TrendingPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [hasMore, setHasMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+
+  const fetchProducts = async (page: number) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/trending?page=${page}`);
+      const data = await response.json() as ApiResponse;
+      
+      setProducts(prevProducts => [...prevProducts, ...data.Items]);
+      setHasMore(data.CurrentPage < data.TotalPages);
+      setCurrentPage(data.CurrentPage);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setError('Failed to fetch products');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const loadProducts = async () => {
