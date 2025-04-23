@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 node:18-alpine AS builder
+# Build stage
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -6,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy the rest of the application
 COPY . .
@@ -14,23 +15,33 @@ COPY . .
 # Set environment variables
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV PATH $PATH:/app/node_modules/.bin
 
 # Build the application
 RUN npm run build
 
-# Production image, copy all the files and run nginx
-FROM --platform=linux/amd64 nginx:alpine AS runner
-WORKDIR /usr/share/nginx/html
+# Production stage
+FROM node:18-alpine AS runner
 
-# Copy built assets from builder
-COPY --from=builder /app/out .
+WORKDIR /app
 
-# Copy nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy package files
+COPY package*.json ./
 
-# Expose port
-EXPOSE 80
+# Install only production dependencies
+RUN npm install --production
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+# Copy built application from builder
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules ./node_modules
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Expose the port
+EXPOSE 3000
+
+# Start the application
+CMD ["npm", "start"] 

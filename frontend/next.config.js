@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
   images: {
     domains: ['via.placeholder.com', 'genattire-eg.myshopify.com'],
     unoptimized: true,
@@ -10,7 +9,11 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_API_URL: 'https://mywebapp-1745023961.azurewebsites.net/api'
-  }
+  },
+  // Add Azure Web App specific configuration
+  poweredByHeader: false,
+  generateEtags: false,
+  distDir: '.next'
 }
 
 module.exports = nextConfig 
