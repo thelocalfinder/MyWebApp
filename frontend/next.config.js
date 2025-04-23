@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export',
   images: {
     domains: ['via.placeholder.com', 'genattire-eg.myshopify.com'],
+    unoptimized: true,
   },
   typescript: {
     ignoreBuildErrors: true
