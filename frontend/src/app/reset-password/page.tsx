@@ -12,6 +12,12 @@ export default function ResetPasswordPage() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [passwordValid, setPasswordValid] = useState({
+    length: false,
+    number: false,
+    special: false,
+    uppercase: false,
+  })
   const router = useRouter()
   const { resetPassword } = useAuth()
 
@@ -21,6 +27,15 @@ export default function ResetPasswordPage() {
     const tokenFromUrl = searchParams.get('token')
     setToken(tokenFromUrl)
   }, [])
+
+  useEffect(() => {
+    setPasswordValid({
+      length: password.length >= 8,
+      number: /\d/.test(password),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      uppercase: /[A-Z]/.test(password),
+    })
+  }, [password])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -72,6 +87,20 @@ export default function ResetPasswordPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+            </div>
+            <div className="mt-4 text-sm">
+              <p className={`${passwordValid.length ? 'text-green-600' : 'text-red-600'}`}>
+                ✓ At least 8 characters
+              </p>
+              <p className={`${passwordValid.uppercase ? 'text-green-600' : 'text-red-600'}`}>
+                ✓ At least one uppercase letter
+              </p>
+              <p className={`${passwordValid.number ? 'text-green-600' : 'text-red-600'}`}>
+                ✓ At least one number
+              </p>
+              <p className={`${passwordValid.special ? 'text-green-600' : 'text-red-600'}`}>
+                ✓ At least one special character
+              </p>
             </div>
             <div>
               <label htmlFor="confirm-password" className="sr-only">
