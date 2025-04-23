@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:18-alpine
+FROM --platform=linux/amd64 node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -19,8 +19,18 @@ ENV PATH $PATH:/app/node_modules/.bin
 # Build the application
 RUN npm run build
 
-# Expose the port
-EXPOSE 3000
+# Production image, copy all the files and run nginx
+FROM --platform=linux/amd64 nginx:alpine AS runner
+WORKDIR /usr/share/nginx/html
 
-# Start the application using the local next command
-CMD ["./node_modules/.bin/next", "start"] 
+# Copy built assets from builder
+COPY --from=builder /app/out .
+
+# Copy nginx config
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port
+EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"] 
