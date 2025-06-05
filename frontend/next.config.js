@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+  reactStrictMode: true,
   images: {
-    domains: ['via.placeholder.com', 'genattire-eg.myshopify.com'],
-    unoptimized: true,
+    domains: ['images.unsplash.com', 'plus.unsplash.com', 'mywebappimages.blob.core.windows.net'],
   },
   typescript: {
     ignoreBuildErrors: true
@@ -10,10 +11,12 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_API_URL: 'https://mywebapp-1745023961.azurewebsites.net/api'
   },
-  // Add Azure Web App specific configuration
+  // Azure Web App configuration
   poweredByHeader: false,
   generateEtags: false,
-  distDir: '.next'
+  distDir: '.next',
+  // Ensure proper handling of static files
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/' : ''
 }
 
 module.exports = nextConfig 

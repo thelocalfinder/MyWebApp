@@ -49,5 +49,27 @@ namespace MyWebApp.Controllers
                 return StatusCode(500, new { error = "An error occurred while fetching categories" });
             }
         }
+
+        [HttpGet("{id}/subcategories")]
+        public async Task<IActionResult> GetSubCategories(int id)
+        {
+            try
+            {
+                _logger.LogInformation($"Fetching subcategories for category ID: {id}");
+                
+                var subcategories = await _context.SubCategories
+                    .Where(sc => sc.CategoryID == id)
+                    .ToListAsync();
+
+                _logger.LogInformation($"Found {subcategories.Count} subcategories for category ID: {id}");
+                
+                return Ok(subcategories);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error fetching subcategories for category ID: {id}");
+                return StatusCode(500, new { error = "An error occurred while fetching subcategories" });
+            }
+        }
     }
 }

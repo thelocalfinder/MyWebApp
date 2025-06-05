@@ -20,6 +20,9 @@ builder.Logging.SetMinimumLevel(LogLevel.Debug);
 var startupLogger = builder.Services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
 startupLogger.LogInformation("Starting application configuration...");
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 // Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -71,7 +74,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", builder =>
     {
         builder
-            .WithOrigins("https://mywebapp-frontend.azurewebsites.net")
+            .WithOrigins(
+                "https://mywebapp-frontend.azurewebsites.net",
+                "http://localhost:3000"
+            )
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -109,6 +115,9 @@ builder.WebHost.UseUrls($"http://*:{port}");
 startupLogger.LogInformation($"Configured to listen on port: {port}");
 
 var app = builder.Build();
+
+// Add health check endpoint
+app.MapHealthChecks("/health");
 
 // IMPORTANT: Use CORS before other middleware
 app.UseCors("AllowFrontend");

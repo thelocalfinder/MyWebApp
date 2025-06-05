@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,13 +10,12 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { categoriesApi } from "@/lib/api-client"
+import { categories } from "@/data/categories"
 import { cn } from "@/lib/utils"
 
 interface SubCategory {
   id: number
   name: string
-  categoryId: number
 }
 
 interface Category {
@@ -34,32 +33,7 @@ interface CategoryFilterProps {
 }
 
 export function CategoryFilter({ onSelect, currentCategory, currentSubcategory, className }: CategoryFilterProps) {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [selectedGender, setSelectedGender] = useState<'women' | 'men'>('women')
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await categoriesApi.getAll()
-        if (!Array.isArray(data)) {
-          throw new Error('Invalid response format')
-        }
-        setCategories(data)
-      } catch (error) {
-        console.error('Error fetching categories:', error)
-        setError('Failed to load categories')
-        setCategories([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCategories()
-  }, [])
 
   const filteredCategories = categories.filter(cat => 
     !cat.gender || 
@@ -68,28 +42,6 @@ export function CategoryFilter({ onSelect, currentCategory, currentSubcategory, 
   )
 
   const buttonText = currentSubcategory || currentCategory || "Category"
-
-  if (loading) {
-    return (
-      <Button variant="outline" className="rounded-full px-6 flex items-center gap-2 whitespace-nowrap">
-        <span>Categories</span>
-        <ChevronDown className="h-4 w-4" />
-      </Button>
-    )
-  }
-
-  if (error) {
-    return (
-      <Button 
-        variant="outline" 
-        className="rounded-full px-6 flex items-center gap-2 text-red-500 whitespace-nowrap"
-        onClick={() => window.location.reload()}
-      >
-        Categories
-        <ChevronDown className="h-4 w-4" />
-      </Button>
-    )
-  }
 
   return (
     <DropdownMenu>

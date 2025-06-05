@@ -1,58 +1,42 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Link from "next/link"
 import { ChevronRight, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { categoriesApi } from "@/lib/api-client"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { categories } from "@/data/categories"
 
 interface SubCategory {
   id: number
   name: string
-  categoryId: number
 }
 
 interface Category {
   id: number
   name: string
   gender?: string | null
-  subcategories?: SubCategory[]
+  subcategories: SubCategory[]
 }
 
 interface CategorySidebarProps {
   onClose?: () => void
-  gender: string
+  gender?: string
 }
 
 export function CategorySidebar({ onClose, gender: initialGender }: CategorySidebarProps) {
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null)
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
   const [gender, setGender] = useState<string | undefined>(initialGender)
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true)
-        console.log('Fetching categories for gender:', gender)
-        const data = await categoriesApi.getAll(gender)
-        console.log('Received categories data:', data)
-        setCategories(data || [])
-      } catch (error) {
-        console.error('Error fetching categories:', error)
-        setCategories([])
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCategories()
-  }, [gender]) // Re-fetch when gender changes
+  const filteredCategories = categories.filter(cat => 
+    !cat.gender || 
+    cat.gender.trim() === '' || 
+    !gender || // Show all categories when no gender is selected
+    cat.gender.toLowerCase() === gender.toLowerCase()
+  )
 
   const handleGenderSelect = (selected: string) => {
     setGender(selected)
@@ -72,14 +56,6 @@ export function CategorySidebar({ onClose, gender: initialGender }: CategorySide
     if (onClose) {
       onClose()
     }
-  }
-
-  if (loading) {
-    return <div className="p-4">Loading categories...</div>
-  }
-
-  if (!categories.length) {
-    return <div className="p-4">No categories found</div>
   }
 
   return (
@@ -123,7 +99,7 @@ export function CategorySidebar({ onClose, gender: initialGender }: CategorySide
             <div className="flex flex-col p-4">
               <h3 className="mb-2 font-medium">Categories</h3>
               <div className="space-y-1">
-                {categories.map((category) => (
+                {filteredCategories.map((category) => (
                   <div key={category.id}>
                     <Button
                       variant="ghost"

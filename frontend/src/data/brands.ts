@@ -1,0 +1,22 @@
+export const brands = [
+  { id: 1, name: "Nike" },
+  { id: 2, name: "Adidas" },
+  { id: 3, name: "Zara" },
+  { id: 4, name: "H&M" },
+  { id: 5, name: "Gucci" },
+  { id: 6, name: "Prada" },
+  { id: 7, name: "Louis Vuitton" },
+  { id: 8, name: "Chanel" },
+  { id: 9, name: "Ralph Lauren" },
+  { id: 10, name: "Calvin Klein" },
+  { id: 11, name: "Levi's" },
+  { id: 12, name: "Tommy Hilfiger" },
+  { id: 13, name: "Versace" },
+  { id: 14, name: "Burberry" },
+  { id: 15, name: "Dior" },
+  { id: 16, name: "Balenciaga" },
+  { id: 17, name: "Armani" },
+  { id: 18, name: "Dolce & Gabbana" },
+  { id: 19, name: "Fendi" },
+  { id: 20, name: "Givenchy" }
+]; 
