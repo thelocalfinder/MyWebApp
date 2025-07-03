@@ -76,7 +76,10 @@ builder.Services.AddCors(options =>
         builder
             .WithOrigins(
                 "https://mywebapp-frontend.azurewebsites.net",
-                "http://localhost:3000"
+                "http://localhost:3000",
+                "https://localhost:3000",
+                "https://*.vercel.app",
+                "https://*.railway.app"
             )
             .AllowAnyMethod()
             .AllowAnyHeader()
